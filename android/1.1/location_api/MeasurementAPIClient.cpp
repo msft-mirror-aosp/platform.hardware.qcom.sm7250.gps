@@ -148,7 +148,7 @@ void MeasurementAPIClient::measurementClose() {
 void MeasurementAPIClient::onGnssMeasurementsCb(
         GnssMeasurementsNotification gnssMeasurementsNotification)
 {
-    LOC_LOGD("%s]: (count: %zu active: %d)",
+    LOC_LOGD("%s]: (count: %u active: %d)",
             __FUNCTION__, gnssMeasurementsNotification.count, mTracking);
     if (mTracking) {
         mMutex.lock();
@@ -197,7 +197,7 @@ static void convertGnssMeasurement(GnssMeasurementsData& in,
         out.flags |= IGnssMeasurementCallback::GnssMeasurementFlags::HAS_CARRIER_PHASE_UNCERTAINTY;
     if (in.flags & GNSS_MEASUREMENTS_DATA_AUTOMATIC_GAIN_CONTROL_BIT)
         out.flags |= IGnssMeasurementCallback::GnssMeasurementFlags::HAS_AUTOMATIC_GAIN_CONTROL;
-    out.svid = in.svId;
+    convertGnssSvid(in, out.svid);
     convertGnssConstellationType(in.svType, out.constellation);
     out.timeOffsetNs = in.timeOffsetNs;
     if (in.stateMask & GNSS_MEASUREMENTS_STATE_CODE_LOCK_BIT)

@@ -28,6 +28,7 @@
  */
 
 #include <LocationUtil.h>
+#include <gps_extended_c.h>
 
 namespace android {
 namespace hardware {
@@ -143,6 +144,74 @@ void convertGnssConstellationType(GnssSvType& in, GnssConstellationType& out)
         case GNSS_SV_TYPE_UNKNOWN:
         default:
             out = GnssConstellationType::UNKNOWN;
+            break;
+    }
+}
+
+void convertGnssSvid(GnssSv& in, int16_t& out)
+{
+    switch(in.type){
+        case GNSS_SV_TYPE_GPS:
+            out = in.svId;
+            break;
+        case GNSS_SV_TYPE_SBAS:
+            out = in.svId;
+            break;
+        case GNSS_SV_TYPE_GLONASS:
+            if (!isGloSlotUnknown(in.svId)) { // OSN is known
+                out = in.svId - GLO_SV_PRN_MIN + 1;
+            } else { //OSN is not known, report FCN
+                out = in.gloFrequency + 92;
+            }
+            break;
+        case GNSS_SV_TYPE_QZSS:
+            out = in.svId;
+            break;
+        case GNSS_SV_TYPE_BEIDOU:
+            out = in.svId - BDS_SV_PRN_MIN + 1;
+            break;
+        case GNSS_SV_TYPE_GALILEO:
+            out = in.svId - GAL_SV_PRN_MIN + 1;
+            break;
+        case GNSS_SV_TYPE_NAVIC:
+            out = in.svId - NAVIC_SV_PRN_MIN + 1;
+            break;
+        default:
+            out = in.svId;
+            break;
+    }
+}
+
+void convertGnssSvid(GnssMeasurementsData& in, int16_t& out)
+{
+    switch (in.svType) {
+        case GNSS_SV_TYPE_GPS:
+            out = in.svId;
+            break;
+        case GNSS_SV_TYPE_SBAS:
+            out = in.svId;
+            break;
+        case GNSS_SV_TYPE_GLONASS:
+            if (!isGloSlotUnknown(in.svId)) { // OSN is known
+                out = in.svId - GLO_SV_PRN_MIN + 1;
+            } else { // OSN is not known, report FCN
+                out = in.gloFrequency + 92;
+            }
+            break;
+        case GNSS_SV_TYPE_QZSS:
+            out = in.svId;
+            break;
+        case GNSS_SV_TYPE_BEIDOU:
+            out = in.svId - BDS_SV_PRN_MIN + 1;
+            break;
+        case GNSS_SV_TYPE_GALILEO:
+            out = in.svId - GAL_SV_PRN_MIN + 1;
+            break;
+        case GNSS_SV_TYPE_NAVIC:
+            out = in.svId - NAVIC_SV_PRN_MIN + 1;
+            break;
+        default:
+            out = in.svId;
             break;
     }
 }
